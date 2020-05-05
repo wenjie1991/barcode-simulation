@@ -1,4 +1,4 @@
-use std::io::{self, BufReader, BufRead, Error,  Write};
+use std::io::{self, BufReader, BufRead, Error,  Write, stderr};
 use std::env;
 use std::fs::File;
 
@@ -36,21 +36,25 @@ fn main() -> Result<(), Error> {
     barcode::write_tissue_barcode(&tissue, path_indluced_barcode)?;
 
     // Grow tissue
-    for _ in 0..15 {
+    for _ in 0..10 {
         tissue = barcode::grow_tissue(tissue);
     }
     barcode::write_tissue_barcode(&tissue, path_biological_sample_barcode)?;
     let mut dna_template = barcode::extract_dna(tissue);
     
     // PCR
-    for i in 0..20 {
+    for i in 0..15 {
         // PCR mutation rate: https://www.hindawi.com/journals/mbi/2014/287430/tab1/
-        barcode::pcr(&mut dna_template, 0.0001);
-        io::stderr().write_fmt(format_args!("PCR cycle {} ...\n", i))?;
+        barcode::pcr(&mut dna_template, 0.00001);
+        stderr().write_fmt(format_args!("PCR cycle {} ...\n", i))?;
     }
     barcode::write_pcr_barcode(&dna_template, path_seq_result)?;
 
-    io::stderr().write_fmt(format_args!("{} PCR product.", dna_template.len()))?;
+    stderr().write_fmt(format_args!("{} PCR product.\n", dna_template.len()))?;
+    for i in 0..10 {
+        let key = dna_template.keys().nth(i).unwrap();
+        stderr().write_fmt(format_args!("  {:?}\n", dna_template.get_key_value(key)))?;
+    }
     Ok(())
 }
 

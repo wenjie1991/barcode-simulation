@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use rand::rngs::ThreadRng;
 use std::fmt;
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{Error, Write};
 
@@ -46,7 +46,10 @@ impl <'a> Cell <'a> {
     }
 
     fn cycle_cell (self) -> Tissue <'a> {
-        vec![self.clone(), self]
+        match self.cell_type {
+            CellType::BiPotent => vec![Cell {cell_type: CellType::UniPotentLum, barcode: self.barcode}, Cell {cell_type: CellType::UniPotentBas, barcode: self.barcode}],
+            _ => vec![self.clone(), self],
+        }
     }
 }
 
@@ -101,11 +104,10 @@ pub fn pcr(dna_template: &mut DNATemp, mutation_rate: f32) {
     }
 }
 
-pub type DNATemp = BTreeMap<String, u64>;
+pub type DNATemp = HashMap<String, u64>;
 
 pub fn extract_dna(tissue: Tissue) -> DNATemp {
-    // let mut dna_template: DNATemp = FxHashMap::new(); //::with_capacity(1000_000_000);
-    let mut dna_template: DNATemp = Default::default(); // DNATemp::new();
+    let mut dna_template: DNATemp = DNATemp::new(); // DNATemp::new();
     for cell in tissue {
         if let Some(v) = dna_template.get_mut(cell.barcode) {
             *v += 1;
@@ -167,10 +169,6 @@ pub fn write_tissue_barcode(tissue: &Tissue, output_path: &str) -> Result<(), Er
     Ok(())
 }
 
-// #![allow(dead_code)]
-
-// pub mod barcode;
-
 #[test]
     fn cell_test() {
         let seq_pool: BarcodePool = vec!["ATCA".to_owned()];
@@ -193,17 +191,3 @@ fn extract_dna_test() {
     }
     println!("{:?} PCR product.", dna_template);
 }
-
-
-
-// pub mod graph {
-//     pub use super::Graph;
-//     pub mod graph_items {
-//         pub mod edge {
-//             pub use super::super::super::Edge;
-//         }
-//         pub mod node {
-//             pub use super::super::super::Node;
-//         }
-//     }
-// }
