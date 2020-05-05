@@ -1,0 +1,49 @@
+name: naughty
+version: 0.0.1
+about: Genrate Null hypothesis distribution. Add noise into the barcodes
+args:
+    - seq_pool:
+        short: s
+        long: seq-pool
+        takes_value: true
+        required: true
+        help: The output of Igor.
+    - cell_cycle:
+        short: c
+        value_name: cell cycle
+        long: cell-cycle
+        takes_value: true
+        help: Cell cycle number for cell to grow, default is 10
+    - pcr_mutation_rate:
+        short: m
+        long: pcr-mut-rat
+        takes_value: true
+        help: pcr mutation rate per cycle per nucleotide
+    - pcr_cycle:
+        short: p
+        long: pcr-cycle
+        takes_value: true
+        help: pcr_cycle number, default is 15
+    - tissue_param:
+        short: t
+        long: init-cell
+        takes_value: true
+        help: The induced cell number for bipotent, pre-basal and pre-lum cells respectively, seperated by ':'
+    - path_indluced_barcode:
+        short: i
+        long: out-induced
+        takes_value: true
+        required: true
+        help: Output path for induced barcodes
+    - path_biological_sample_barcode:
+        short: b
+        long: out-bio
+        takes_value: true
+        required: true
+        help: Output path for barcodes in biological sample
+    - path_seq_result:
+        short: r
+        long: out-sequen
+        takes_value: true
+        required: true
+        help: Out path for barodes in sequencing library
