@@ -7,12 +7,12 @@ And adding the noise into the barocde.
 
 Exp:
 ```bash
-naughty --seq-pool tests/test.csv \
+naughty 
+	--seq-pool tests/test.csv \
     --out-induced tests/induced_barcode.txt \
     --out-bio tests/sample_barcode.txt \
     --out-sequen tests/seq_result.txt \
     --cell-cycle 10 \
     --pcr-cycle 15 \
     --init-cell 10:10:10
-    --
 ```

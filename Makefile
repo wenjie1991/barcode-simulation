@@ -3,12 +3,12 @@ run:
 	cargo run --release -- --seq-pool tests/test.csv --out-induced tests/induced_barcode.txt --out-bio tests/sample_barcode.txt --out-sequen tests/seq_result.txt
 
 test:
-	cargo run --release -- --seq-pool tests/test.csv \
-    --out-induced tests/induced_barcode.txt \
-    --out-bio tests/sample_barcode.txt \
-    --out-sequen tests/seq_result.txt \
+	cargo run --release -- \
+	--seq-pool tests/test.csv \
+    --out-barcode tests/output \
     --cell-cycle 10 \
-    --pcr-cycle 15 \
+    --pcr-cycle 30 \
+    --pcr-effi 0.7 \
     --init-cell 10:10:10
 
 clean:

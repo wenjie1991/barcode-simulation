@@ -1,9 +1,10 @@
 use rand::seq::SliceRandom;
 use rand::rngs::ThreadRng;
+use rand::distributions::{Binomial, Bernoulli, Distribution};
 use std::fmt;
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{Error, Write};
+use std::io::{Error, Write, stderr};
 
 // use rand::distributions::{Bernoulli, Distribution};
 
@@ -53,6 +54,7 @@ impl <'a> Cell <'a> {
     }
 }
 
+
 pub type Tissue <'a> = Vec<Cell <'a>>;
 
 
@@ -82,17 +84,27 @@ fn gen_pcr_mutation(seq: &String, rng: &mut ThreadRng) -> String {
 // distribution.sample(rng)
 // }
 
-pub fn pcr(dna_template: &mut DNATemp, mutation_rate: f32) {
-    let mut new_seqs: Vec<String> = Vec::new();
-    // let dist: Bernoulli = Bernoulli::new(0.001).unwrap();
-    let mut rng = rand::thread_rng();
+pub fn pcr(dna_template: &mut DNATemp, mutation_rate: f64, pcr_efficiency: f64) {
+    let mut new_seqs: Vec<String> = Vec::with_capacity(1000_000_000);
+    let mut rng1 = rand::thread_rng();
+    let mut rng2 = rand::thread_rng();
+    let mut rng3 = rand::thread_rng();
+
+    // calculate pcr mutation error number by Binomail distribution.
+    let mut bin = |n| { Binomial::new(n, mutation_rate).sample(&mut rng1) };
+
+    // pcr efficiency
+    let mut bern = || { Bernoulli::new(pcr_efficiency).unwrap().sample(&mut rng2) };
 
     for (k, v) in dna_template.iter_mut() {
-        let mutation_count: f32 = *v as f32 * mutation_rate; 
-        for _ in 1..mutation_count as u64 {
-            new_seqs.push(gen_pcr_mutation(k, &mut rng));
+        let mutation_count: u64 = bin(*v);
+        for _ in 0..mutation_count as u64 {
+            new_seqs.push(gen_pcr_mutation(k, &mut rng3));
         }
-        *v = *v * 2 as u64 - mutation_count as u64;
+
+        if bern() {
+            *v = *v * 2u64 - mutation_count;
+        }
     }
 
     for seq in new_seqs {
@@ -106,9 +118,10 @@ pub fn pcr(dna_template: &mut DNATemp, mutation_rate: f32) {
 
 pub type DNATemp = HashMap<String, u64>;
 
-pub fn extract_dna(tissue: Tissue) -> DNATemp {
-    let mut dna_template: DNATemp = DNATemp::new(); // DNATemp::new();
-    for cell in tissue {
+pub fn extract_dna(tissue: &Tissue, phenotype: CellType) -> DNATemp {
+    let mut dna_template: DNATemp = HashMap::with_capacity(1000_000_000); // DNATemp::new();
+
+    for cell in tissue.iter().filter(|x| x.cell_type == phenotype) {
         if let Some(v) = dna_template.get_mut(cell.barcode) {
             *v += 1;
         } else {
@@ -184,7 +197,7 @@ fn extract_dna_test() {
     for _ in 0..5 {
         tissue = grow_tissue(tissue);
     }
-    let mut dna_template = extract_dna(tissue);
+    let mut dna_template = extract_dna(&tissue, CellType::UniPotentBas);
     println!("{:?} DNATemp generated.", dna_template);
     for _ in 0..10 {
         pcr(&mut dna_template, 0.0001);

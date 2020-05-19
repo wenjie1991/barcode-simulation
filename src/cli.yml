@@ -19,6 +19,11 @@ args:
         long: pcr-mut-rat
         takes_value: true
         help: pcr mutation rate per cycle per nucleotide
+    - pcr_efficiency:
+        short: e
+        long: pcr-effi
+        takes_value: true
+        help: pcr mutation rate per cycle per nucleotide
     - pcr_cycle:
         short: p
         long: pcr-cycle
@@ -29,21 +34,9 @@ args:
         long: init-cell
         takes_value: true
         help: The induced cell number for bipotent, pre-basal and pre-lum cells respectively, seperated by ':'
-    - path_indluced_barcode:
+    - prefix_output:
         short: i
-        long: out-induced
+        long: out-barcode
         takes_value: true
         required: true
-        help: Output path for induced barcodes
-    - path_biological_sample_barcode:
-        short: b
-        long: out-bio
-        takes_value: true
-        required: true
-        help: Output path for barcodes in biological sample
-    - path_seq_result:
-        short: r
-        long: out-sequen
-        takes_value: true
-        required: true
-        help: Out path for barodes in sequencing library
+        help: Output prefix 
