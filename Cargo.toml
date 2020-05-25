@@ -1,5 +1,5 @@
 [package]
-name = "sequencing-simulation"
+name = "pcr-simulation"
 version = "0.1.0"
 authors = ["wenjie1991 <sunwjie@gmail.com>"]
 edition = "2018"

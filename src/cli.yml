@@ -1,42 +1,41 @@
-name: naughty
+name: pcr-simulation
 version: 0.0.1
-about: Genrate Null hypothesis distribution. Add noise into the barcodes
+about: Simulate PCR process
 args:
-    - seq_pool:
-        short: s
-        long: seq-pool
+    - template:
+        short: t
+        long: template
         takes_value: true
         required: true
-        help: The output of Igor.
-    - cell_cycle:
-        short: c
-        value_name: cell cycle
-        long: cell-cycle
-        takes_value: true
-        help: Cell cycle number for cell to grow, default is 10
+        help: The PCR template sequence
     - pcr_mutation_rate:
         short: m
-        long: pcr-mut-rat
+        long: mutation-rate
         takes_value: true
-        help: pcr mutation rate per cycle per nucleotide
-    - pcr_efficiency:
-        short: e
-        long: pcr-effi
-        takes_value: true
-        help: pcr mutation rate per cycle per nucleotide
+        required: true
+        help: PCR mutation rate (default 10e-5)
     - pcr_cycle:
-        short: p
-        long: pcr-cycle
+        short: c
+        long: n-cycle
         takes_value: true
-        help: pcr_cycle number, default is 15
-    - tissue_param:
-        short: t
-        long: init-cell
+        required: true
+        help: PCR cycle (default 15)
+    - pcr_efficiency_mean:
+        short: e
+        long: efficiency-mean
+        required: true
         takes_value: true
-        help: The induced cell number for bipotent, pre-basal and pre-lum cells respectively, seperated by ':'
+        help: PCR efficiency mean (default 0.5)
+    - pcr_efficiency_sd:
+        short: s
+        long: efficiency-sd
+        required: true
+        takes_value: true
+        help: PCR efficiency sd (default 1)
     - prefix_output:
-        short: i
-        long: out-barcode
+        short: o
+        long: out-prefix
         takes_value: true
         required: true
         help: Output prefix 
+
