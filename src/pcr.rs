@@ -112,7 +112,7 @@ pub fn pcr_model1(dna_template: &mut DNATemp, mutation_rate: f64, pcr_efficiency
         }
 
         if bern() {
-            v.0 = v.0 * 2u64 - mutation_count;
+            *v = (v.0 * 2u64 - mutation_count, v.1);
         }
     }
 
@@ -124,6 +124,10 @@ pub fn pcr_model1(dna_template: &mut DNATemp, mutation_rate: f64, pcr_efficiency
         }
     }
 }
+
+// fn bern(pcr_efficiency: f64, rng: &mut ThreadRng) -> bool {
+    // Bernoulli::new(pcr_efficiency).unwrap().sample(rng)
+// }
 
 pub fn pcr_model6(dna_template: &mut DNATemp, mutation_rate: f64, pcr_efficiency_mean: f64, pcr_efficiency_sd: f64) {
     let mut new_seqs: Vec<String> = vec![];
@@ -150,7 +154,7 @@ pub fn pcr_model6(dna_template: &mut DNATemp, mutation_rate: f64, pcr_efficiency
         }
 
         if bern(v.1) {
-            v.0 = v.0 * 2u64 - mutation_count;
+            *v = (v.0 * 2u64 - mutation_count, v.1);
         }
     }
 
@@ -190,9 +194,9 @@ pub fn read_template(file: String, pcr_efficiency_mean: f64, pcr_efficiency_sd: 
         let seq = l.unwrap();
 
         if let Some(v) = dna_template.0.get_mut(&seq) {
-            v.0 += 1;
+            *v = (v.0 + 1, v.1);
         } else {
-            dna_template.0.insert(seq.to_owned(), (1, 0f64));
+            dna_template.0.insert(seq.to_owned(), (1, get_pcr_efficiency()));
         }
     }
 
