@@ -1,10 +1,9 @@
 #[macro_use]
 extern crate clap;
+extern crate pcr;
 use clap::App;
-use std::io::{BufReader, BufRead, Error,  Write, stderr};
-use std::fs::File;
-
-mod pcr;
+use std::io::{Error,  Write, stderr};
+use pcr::*;
 
 
 fn main() -> Result<(), Error> {
@@ -21,14 +20,14 @@ fn main() -> Result<(), Error> {
     let prefix_output = matches.value_of("prefix_output").unwrap().to_string();
     let path_seq = prefix_output.clone() + "_seq_barcode.txt";
 
-    let mut dna_template = pcr::read_template(template, pcr_efficiency_mean, pcr_efficiency_sd)?;
+    let mut dna_template = read_template(template, pcr_efficiency_mean, pcr_efficiency_sd)?;
     // PCR
 
     for i in 0..pcr_cycle {
-        pcr::pcr(&mut dna_template, pcr_mutation_rate, pcr_efficiency_mean, pcr_efficiency_sd);
+        pcr(&mut dna_template, pcr_mutation_rate, pcr_efficiency_mean, pcr_efficiency_sd);
         stderr().write_fmt(format_args!("PCR cycle {} ...\n", i))?;
     }
-    pcr::write_pcr_barcode(dna_template, &path_seq)?;
+    write_pcr_barcode(dna_template, &path_seq)?;
     // stderr().write_fmt(format_args!("{} PCR product.\n", dna_template.len()))?;
     // stderr().write_fmt(format_args!("{} PCR product.\n", dna_template.len()))?;
     // debug code: to print template result, START

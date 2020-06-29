@@ -1,10 +1,13 @@
 [package]
 name = "pcr-simulation"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["wenjie1991 <sunwjie@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "pcr"           # The name of the target.
+path = "src/lib.rs"    # The source file of the target.
 
 [dependencies]
 rand = "0.7.2"

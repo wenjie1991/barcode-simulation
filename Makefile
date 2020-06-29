@@ -10,7 +10,7 @@ test:
     # --pcr-cycle 30 \
     # --pcr-effi 0.7 \
     # --init-cell 10:10:10
-	cargo run --release -- --n-cycle 10 \
+	cargo run --release -- --n-cycle 12 \
     --efficiency-mean 0.5 \
     --efficiency-sd 0.2 \
     --mutation-rate 0.00001 \

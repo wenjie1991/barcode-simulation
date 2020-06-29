@@ -1,3 +1,5 @@
+extern crate rand;
+
 use rand::seq::SliceRandom;
 use rand::rngs::ThreadRng;
 use rand::distributions::{Binomial, Normal, Bernoulli, Distribution};
@@ -53,7 +55,6 @@ impl <'a> Cell <'a> {
         }
     }
 }
-
 
 pub type Tissue <'a> = Vec<Cell <'a>>;
 
@@ -137,32 +138,36 @@ pub fn pcr_model6(dna_template: &mut DNATemp, mutation_rate: f64, pcr_efficiency
     let mut rng4 = rand::thread_rng();
 
     // calculate pcr mutation error number by Binomail distribution.
-    let mut bin = |n, length| { Binomial::new(n, mutation_rate * length).sample(&mut rng1) };
+    let mut bin_mut = |n, length| { Binomial::new(n, mutation_rate * length).sample(&mut rng1) };
 
-    // pcr success or not
-    let mut bern = |pcr_efficiency: f64| { Bernoulli::new(pcr_efficiency).unwrap().sample(&mut rng2) };
+    // pcr success number
+    // let mut bern = |pcr_efficiency: f64| { Bernoulli::new(pcr_efficiency).unwrap().sample(&mut rng2) };
+    let mut bin_success = |n, pcr_efficiency| { Binomial::new(n, pcr_efficiency).sample(&mut rng2) };
 
     // pcr efficiency
     let pcr_efficiency_dist = Normal::new(pcr_efficiency_mean, pcr_efficiency_sd);
+
+    // In the Best's paper, they keep the efficiency betwenn [0, 1] by min(1).max(0)
     let mut get_pcr_efficiency = || { pcr_efficiency_dist.sample(&mut rng4).abs().min(1.0_f64) };
 
 
     for (k, v) in dna_template.0.iter_mut() {
-        let mutation_count: u64 = bin(v.0, k.len() as f64);
+        // pcr copy
+        let pcr_success_n = bin_success(v.0, v.1);
+
+        let mutation_count: u64 = bin_mut(pcr_success_n, k.len() as f64);
         for _ in 0..mutation_count as u64 {
             new_seqs.push(gen_pcr_mutation(k, &mut rng3));
         }
 
-        if bern(v.1) {
-            *v = (v.0 * 2u64 - mutation_count, v.1);
-        }
+        *v = (v.0 + pcr_success_n - mutation_count, v.1);
     }
 
     for seq in new_seqs {
         if let Some(v) = dna_template.0.get_mut(&seq) {
             v.0 += 1;
         } else {
-            let pcr_efficiency = dna_template.0.insert(seq, (1, get_pcr_efficiency()));
+            dna_template.0.insert(seq, (1, get_pcr_efficiency()));
         }
     }
 }
