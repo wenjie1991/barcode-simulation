@@ -3,6 +3,16 @@
 The tiny naughty program is used to generate null hypothesis distribution of barcode frequency for lineage tricing. 
 And adding the noise into the barocde.
 
+# Build from source code
+
+Install the [`rustup`](https://rustup.rs/) tool chains.
+
+Use `cargo` to build the program.
+
+```bash
+cargo build --release
+```
+
 # Usage
 
 ```bash

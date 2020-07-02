@@ -1,5 +1,5 @@
 name: pcr-simulation
-version: 0.0.1
+version: 0.1.2
 about: Simulate PCR process
 args:
     - template:
